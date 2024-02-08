@@ -1,4 +1,4 @@
-package de.telran.module_1.generics;
+package de.telran.module_1.lesson_4.generics;
 
 public interface Accountable <T>{
     T getId();
