@@ -1,7 +1,6 @@
 package de.telran.module_2.lesson_4;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class SimpleHashSet {
     public static void main(String[] args) {
@@ -18,6 +17,34 @@ public class SimpleHashSet {
         cats.add(new Cat("Jack", 10));
 
         System.out.println(cats);
+
+        Set<Integer> sets = new HashSet<>();
+        sets.add(5);
+        sets.add(2);
+        sets.add(3);
+        sets.add(9);
+        sets.add(4);
+        System.out.println(sets);
+
+        Set<String> setsStr = new HashSet<>();
+        setsStr.add("B");
+        setsStr.add("A");
+        setsStr.add("1C");
+        setsStr.add("F");
+        setsStr.add("AA");
+        System.out.println(setsStr);
+
+        SortedSet<String> setStr1 = new TreeSet<>();
+        setStr1.addAll(setsStr);
+        System.out.println(setStr1);
+
+        Set<String> linkedHashSet = new LinkedHashSet<>();
+        linkedHashSet.add("B");
+        linkedHashSet.add("A");
+        linkedHashSet.add("1C");
+        linkedHashSet.add("F");
+        linkedHashSet.add("AA");
+        System.out.println(linkedHashSet);
 
 
     }
