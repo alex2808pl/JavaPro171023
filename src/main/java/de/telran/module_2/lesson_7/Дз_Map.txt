@@ -19,7 +19,7 @@
 «Mumbai» -> «Berlin»
 «Seoul» -> «Mumbai»
 Выход:
-Tokyo->Seoul, Seoul->Mumbai, Mumbai->Berlin, Berlin->Lindon
+Tokyo->Seoul, Seoul->Mumbai, Mumbai->Berlin, Berlin->London
 
 4)* Сгруппируйте слова с одинаковым набором символов, желательно используя Map.
 Дан список слов со строчными буквами. Реализуйте функцию поиска всех слов с одинаковым уникальным набором символов. 
