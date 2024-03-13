@@ -2,6 +2,8 @@ package de.telran.module_3.lesson_3;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
 import static java.util.stream.Collectors.toUnmodifiableSet;
@@ -104,7 +106,178 @@ public class SimpleTerminal {
                 .collect(toUnmodifiableMap(Function.identity(), String::length));
         // resultMap.put("foo", 3); //UnsupportedOperationException
 
+        // --- joining
+        String resultString = givenList.stream().collect(joining());
+        System.out.println(resultString);
+
+        resultString = givenList.stream().collect(joining(","));
+        System.out.println(resultString);
+
+        resultString = givenList.stream().collect(joining(" ", "PRE-", "-POST"));
+        System.out.println(resultString);
+
+        // стандарт toString
+        resultString = givenList.stream().collect(joining(", ", "[", "]"));
+        System.out.println(resultString);
+        System.out.println(givenList);
+
+        // --- counting
+        Long resultLong = givenList.stream().collect(counting());
+        System.out.println(resultLong);
+
+        resultLong = givenList.stream().count(); // аналог
+        System.out.println(resultLong);
+
+        // --- summarizingDouble
+        DoubleSummaryStatistics resultStat = givenList.stream()
+                .collect(summarizingDouble(String::length));
+        System.out.println(resultStat);
+        System.out.println("Среднее значение = "+resultStat.getAverage());
+
+        // --- averagingDouble
+        Double resultDouble = givenList.stream()
+                .collect(averagingDouble(String::length));
+        System.out.println(resultDouble);
+
+        // --- summingDouble
+        resultDouble = givenList.stream()
+                .collect(summingDouble(String::length));
+        System.out.println(resultDouble);
+
+        System.out.println(givenList.stream() // аналог
+                .mapToInt(String::length)
+                .sum());
+
+        // --- maxBy()/minBy()
+        Optional<String> resultOpt = givenList.stream()
+                .collect(maxBy(Comparator.naturalOrder()));
+        System.out.println("maxBy = "+resultOpt);
+
+        resultOpt = givenList.stream()
+                .collect(maxBy(String::compareTo)); // аналог
+        System.out.println("maxBy = "+resultOpt);
+
+        System.out.println(givenList.stream() // аналог
+                .max(String::compareTo));
+
+        resultOpt = givenList.stream()
+                .collect(minBy(Comparator.naturalOrder()));
+        System.out.println(resultOpt);
+
+        System.out.println(givenList.stream() // аналог
+                .min(String::compareTo));
+
+// --- groupingBy
+        Map<Integer, Set<String>> resultMap1 = givenList.stream()
+                .collect(groupingBy(String::length, toSet()));
+        System.out.println(resultMap1);
+
+        List<String> list = List.of("bb", "ccc", "dd", "aj", "uiu", "aa", "bb");
+        Map<Integer, List<String>> resultMap2 = list.stream()
+                .collect(groupingBy(String::length, toList()));
+        System.out.println(resultMap2);
+
+        resultMap1 = list.stream() // уберутся дубликаты
+                .collect(groupingBy(String::length, toSet()));
+        System.out.println(resultMap1);
+
+        resultMap1 = list.stream() // уберутся дубликаты
+                .collect(groupingBy(String::length, toCollection(TreeSet::new)));
+        System.out.println(resultMap1);
+
+        Map<Integer, Optional<String>> resultMapString = list.stream()  //минимальное значение
+                .collect(groupingBy(String::length, minBy(String::compareTo)));
+        System.out.println(resultMapString);
+
+        resultMapString = givenList.stream()
+                .collect(groupingBy(String::length, maxBy(String::compareTo))); //максимальное значение
+        System.out.println(resultMapString);
+
+        // --- partitioningBy
+        Map<Boolean, List<String>> resultMap3 = givenList.stream()
+                .collect(partitioningBy(s -> s.length() > 2));
+        System.out.println(resultMap3);
+
+        Map<Boolean, List<Integer>> mapInt = IntStream.range(0, 100).boxed()
+                .limit(10)
+                .collect(partitioningBy(i -> (i % 3) == 0));
+        System.out.println(mapInt);
+
+        mapInt = IntStream.range(0, 100).boxed() //дубликат
+                .limit(10)
+                .collect(groupingBy(i -> (i % 3) == 0, mapping(i -> i, toList())));
+        System.out.println(mapInt);
+
+        // --- teeing
+        List<Integer> numbers = Arrays.asList(42, 4, 2, 24);
+        int sum = numbers.stream().collect(teeing(
+                minBy(Integer::compareTo), // The first collector
+                maxBy(Integer::compareTo), // The second collector
+                (min, max) -> min.get()+max.get()// Receives the result from those collectors and combines them
+        ));
+        System.out.println(sum);
+
+        String resultStr = list.stream().collect(teeing(
+                minBy(String::compareTo), // The first collector
+                maxBy(String::compareTo), // The second collector
+                (min, max) -> min.get()+" -- "+max.get()// Receives the result from those collectors and combines them
+        ));
+
+        Collection<String> resultCollection = list.stream().collect(teeing(
+                toList(), // The first collector
+                toSet(), // The second collector
+                (v1, v2) -> (v1.size() > v2.size()) ? v2 : v1
+        ));
+        System.out.println(resultCollection);
 
 
+        // mapping
+
+        List<Person> personList = Arrays.asList(new Person("bob", 34),
+                new Person("bob", 43),
+                    new Person("mary", 84),
+                new Person("john", 84),
+                new Person("john", 12),
+                new Person("bob", 22));
+
+        System.out.println("Person list - " + personList);
+
+        Stream<Person> personStream = personList.stream();
+
+
+       Map<String, List<Integer>> resultMapInt1 =
+        personList.stream()
+                .collect(groupingBy(Person::getName,
+                    mapping(Person::getAge, toList())));
+
+        System.out.println("Mapping result - " + resultMapInt1);
+
+        }
+}
+
+
+class Person {
+    public String name;
+    public int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                '}';
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getAge() {
+        return age;
     }
 }
