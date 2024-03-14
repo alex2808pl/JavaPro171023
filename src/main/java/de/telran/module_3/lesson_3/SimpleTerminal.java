@@ -232,18 +232,38 @@ public class SimpleTerminal {
 
 
         // mapping
-
-        List<Person> personList = Arrays.asList(new Person("bob", 34),
+        List<Person> personList = Arrays.asList(
+                new Person("bob", 34),
                 new Person("bob", 43),
-                    new Person("mary", 84),
+                new Person("mary", 84),
                 new Person("john", 84),
                 new Person("john", 12),
                 new Person("bob", 22));
 
         System.out.println("Person list - " + personList);
 
+
+        System.out.println(personList.stream()
+                .collect(mapping(Person::getName, toList())));
+
+        System.out.println(personList.stream()
+                .collect(mapping(Person::getAge, maxBy(Integer::compareTo))));
+
         Stream<Person> personStream = personList.stream();
 
+        System.out.println(personList.stream()
+                .collect(groupingBy(Person::getName, toList())));
+
+        System.out.println(personList.stream()
+                .collect(mapping(Person::getAge,toList())));
+
+        System.out.println(personList.stream()
+                .collect(groupingBy(Person::getName,
+                        mapping(Person::getName, toList()))));
+
+        System.out.println(personList.stream()
+                .collect(groupingBy(Person::getName,
+                        mapping(Person::getAge, maxBy(Integer::compareTo)))));
 
        Map<String, List<Integer>> resultMapInt1 =
         personList.stream()
@@ -253,31 +273,4 @@ public class SimpleTerminal {
         System.out.println("Mapping result - " + resultMapInt1);
 
         }
-}
-
-
-class Person {
-    public String name;
-    public int age;
-
-    public Person(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
-
-    @Override
-    public String toString() {
-        return "Person{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                '}';
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getAge() {
-        return age;
-    }
 }
