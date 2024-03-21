@@ -1,0 +1,15 @@
+1) Реализуйте механизм сохранения и чтения объекта POJO Client в файл.
+Вот приблизительно наполнение класса Client.
+    private Long id;
+    private String status;
+    private Long taxCode;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String address;
+    private String phone;
+2) ** Научите данный механизм сохранять также список таких объектов в файл,
+и читать эти объекты из файла в List<Client>.
+  
+
+  
