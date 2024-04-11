@@ -62,7 +62,8 @@ class MyThread extends Thread {
 
 }
 
-class MyThreadRunnable implements Runnable {
+//Если уже есть какой то предок
+class MyThreadRunnable extends Object implements Runnable {
 
     @Override
     public void run() {
