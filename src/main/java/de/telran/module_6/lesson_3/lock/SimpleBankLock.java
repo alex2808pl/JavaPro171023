@@ -1,6 +1,8 @@
 package de.telran.module_6.lesson_3.lock;
 
 import java.util.Arrays;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class SimpleBankLock {
     public static final int NACCOUNTS = 100;
@@ -33,6 +35,7 @@ public class SimpleBankLock {
 class Bank
 {
     private final double[] accounts;
+    private final Lock bankLock = new ReentrantLock();
 
     /**
      * Конструктор.
@@ -53,14 +56,22 @@ class Bank
      * @param amount — сумма для перевода
      */
 
-    public /*synchronized*/ void transfer(int from, int to, double amount)
+    public void transfer(int from, int to, double amount)
     {
         if (accounts[from] < amount) return;
         System.out.print(Thread.currentThread());
-        accounts[from] -= amount;
-        System.out.printf(" %10.2f from %d to %d", amount, from, to);
-        accounts[to] += amount;
-        System.out.printf(" Total Balance: %10.2f%n", getTotalBalance());
+        bankLock.lock(); //ставит блокировку
+        try {
+            accounts[from] -= amount;
+            System.out.printf(" %10.2f from %d to %d", amount, from, to);
+            accounts[to] += amount;
+            System.out.printf(" Total Balance: %10.2f%n", getTotalBalance());
+        }
+        finally {
+            bankLock.unlock();  // снимаем блокировку
+        }
+
+
     }
 
     /**
