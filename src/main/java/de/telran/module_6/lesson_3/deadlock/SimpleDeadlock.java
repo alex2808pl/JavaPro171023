@@ -15,7 +15,7 @@ public class SimpleDeadlock {
             synchronized (lock1) {
                 System.out.println("Thread-1 получил lock1");
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(1000); //иммитирую работу
                 } catch (InterruptedException e) {
                     System.out.println("Thread-1 interrupted.");
                 }
@@ -23,7 +23,7 @@ public class SimpleDeadlock {
                 synchronized (lock2) {
                     System.out.println("Thread-1 получил lock2");
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(1000); //иммитирую работу
                     } catch (InterruptedException e) {
                         System.out.println("Thread-1 interrupted.");
                     }
@@ -40,7 +40,7 @@ public class SimpleDeadlock {
             synchronized (lock2) { // lock1 - будет решение проблемы deadlock
                 System.out.println("Thread-2 получил lock2");
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(1000); //иммитирую работу
                 } catch (InterruptedException e) {
                     System.out.println("Thread-2 interrupted.");
                 }
@@ -48,7 +48,7 @@ public class SimpleDeadlock {
                 synchronized (lock1) {  // lock2 - будет решение проблемы deadlock
                     System.out.println("Thread-2 получил lock1");
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(1000); //иммитирую работу
                     } catch (InterruptedException e) {
                         System.out.println("Thread-2 interrupted.");
                     }
