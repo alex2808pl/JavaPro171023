@@ -1,90 +1,74 @@
 package de.telran.module_6.lesson_4;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class SimpleWaitNotify {
-    public static void main(String[] args) {
-        ThreadInteraction interaction = new ThreadInteraction();
+    public static void main(String[] args) throws InterruptedException {
 
-        Pilot request = new Pilot(interaction);
-        Controller response = new Controller(interaction);
+        AtomicInteger data = new AtomicInteger(0);
+
+        Thread waiter = new Waiter(data);
+        Thread job = new Job(data);
+        waiter.start();
+        job.start();
+
+        waiter.join();
+
+        System.out.println("Заканчиваю главный поток = "+data.get());
+
 
     }
 }
 
-class ThreadInteraction {
-    boolean isActive = false;
-    public synchronized void Request(String request){
-        if(isActive){
-            try {
-                wait();
-            }catch (InterruptedException e){
-                e.printStackTrace();
-            }
-        }
-        System.out.println("Пилот:");
-        System.out.println(request);
-        isActive = true;
-        notify();
-    }
+class Waiter  extends Thread {
+    private AtomicInteger data;
 
-    public synchronized void Response(String response){
-        if(!isActive){
-            try {
-                wait();
-            }catch (InterruptedException e){
-                e.printStackTrace();
-            }
-        }
-        System.out.println("Диспетчер:");
-        System.out.println(response);
-        isActive = false;
-        notify();
-    }
-}
-
-class Pilot implements Runnable {
-    ThreadInteraction interaction;
-    String[] request =
-            {
-                    "1. Dnipro Radar, Я борт - Aeroflot 1816",
-                    "2. Запрос высоты, Aeroflot 1816",
-                    "3. Вас понял, моя высота 6,000 фут, борт - Aeroflot 1816",
-                    "4. Dnipro Radar, вас понял, подымаюсь на высоту 7,000 футов, борт - Aeroflot 1816",
-                    "5. Dnipro Radar, я на высоте 7,000 футов, борт - Aeroflot 1816"
-            };
-
-    public Pilot(ThreadInteraction interaction) {
-        this.interaction = interaction;
-        new Thread(this, "Request").start();
+    public Waiter(AtomicInteger data) {
+        this.data = data;
     }
 
     @Override
     public void run() {
-        for (int i = 0; i < request.length; i++) {
-            interaction.Request(request[i]);
+        System.out.println("Поток Waiter стартовал.");
+        // Проверил что-то и понял что ему нужно подождать
+        synchronized (data) {
+            try {
+                if(data.get()<=0) {
+                    data.wait();
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
+        // Обработал информацию
+
+        System.out.println("Я дополнительно обрабатываю результат -> "+data.get());
+        data.addAndGet(1_000_000);
+
+        System.out.println("Поток Waiter закончил работу.");
     }
 }
 
-class Controller implements Runnable {
-    ThreadInteraction interaction;
-    String[] response =
-            {
-                    "1. Aeroflot 1816, Dnipro Radar, подымитесь выше",
-                    "2. Aeroflot 1816, вы на высоте 6,000 футов",
-                    "3. Aeroflot 1816, вам стоит подняться на высоту 7,000 футов",
-                    "4. Aeroflot 1816, когда будете на высоте 7,000 футов, доложите",
-                    "5. Aeroflot 1816, принято, конец связи, удачного полета!"
-            };
+class Job  extends Thread {
+    private AtomicInteger data;
 
-    public Controller(ThreadInteraction interaction) {
-        this.interaction = interaction;
-        new Thread(this, "Response").start();
+    public Job(AtomicInteger data) {
+        this.data = data;
     }
 
     @Override
     public void run() {
-        for (int i = 0; i < response.length; i++) {
-            interaction.Response(response[i]);
+        System.out.println("Поток Job стартовал.");
+        // Работает над информацией
+        int sum = 0;
+        for (int i=0; i<100_000; i++) {
+            if(i % 13 == 0)
+                sum+=i;
         }
+        data.addAndGet(sum);
+        synchronized (data) {
+            data.notify();
+        }
+        System.out.println("Поток Job закончил работу.");
     }
 }

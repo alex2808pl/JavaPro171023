@@ -58,7 +58,7 @@ public class SimpleAtomic {
 
 
 class CounterClassic extends Thread {
-    private int counter = 0;
+    private volatile int counter = 0;
 
     @Override
     public void run() {
@@ -67,6 +67,9 @@ class CounterClassic extends Thread {
 
         for (int i = 0; i < max; i++)
             ++counter;
+        // tmp = counter
+        // tmp = tmp+1
+        // counter = tmp
     }
 
     public int getCounter() {
@@ -78,12 +81,15 @@ class CounterSync extends Thread {
     private int counter = 0;
 
     @Override
-    public synchronized void run() {
-
+    public /*synchronized*/ void run() {
+        System.out.println(Thread.currentThread().getName()+" -> start");
         int max = 1_000_000;
 
         for (int i = 0; i < max; i++)
-            ++counter;
+            synchronized(this) { //синхронизация критической секции кода
+                ++counter;
+            }
+        System.out.println(Thread.currentThread().getName()+" -> end");
     }
 
     public int getCounter() {
