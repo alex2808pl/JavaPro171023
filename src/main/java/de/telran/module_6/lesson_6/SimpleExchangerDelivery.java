@@ -66,7 +66,7 @@ class Truck implements Runnable {
             System.out.println("В грузовик " + number + " погрузили: " + parcels[0] + " и " + parcels[1]);
             System.out.println("Грузовик " + number + " выехал из пункта " + departure + " в пункт " + destination + " с остановкой в пункте E");
 
-            Thread.sleep(r.nextInt(2, 5) * 1000L); // имитация времени поездки
+            Thread.sleep(r.nextInt(2, 5) * 1000); // имитация времени поездки
 
             System.out.println("Грузовик " + number + " приехал в пункт Е -> " + System.currentTimeMillis());
 
@@ -76,7 +76,7 @@ class Truck implements Runnable {
 
             System.out.println("В грузовик " + number + " переместили посылку для пункта " + destination);
 
-            Thread.sleep(r.nextInt(2, 5) * 1000L); //имитация времени второй половины дороги
+            Thread.sleep(r.nextInt(2, 5) * 1000); //имитация времени второй половины дороги
 
             System.out.println("Грузовик " + number + " приехал в " + destination + " и доставил: " + parcels[0] + " и " + parcels[1]);
         } catch (InterruptedException e) {
