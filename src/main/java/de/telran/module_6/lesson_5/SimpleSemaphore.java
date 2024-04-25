@@ -5,7 +5,7 @@ import java.util.concurrent.Semaphore;
 public class SimpleSemaphore {
     public static void main(String[] args) throws InterruptedException {
         // Ограничить количество одновременно работающих потоков
-        Semaphore semaphore = new Semaphore(3, true);
+        Semaphore semaphore = new Semaphore(2, true);
         for (int i = 0; i < 10; i++) {
             new Thread(new ThreadTest(semaphore)).start();
             Thread.sleep(500);
