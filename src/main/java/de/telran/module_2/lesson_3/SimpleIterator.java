@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SimpleIterator {
     public static void main(String[] args) {
@@ -41,6 +42,7 @@ public class SimpleIterator {
             Integer el = it.next();
             if(el % 2 !=0 ) {
                 it.remove(); //удаляем объект
+//                arrayList.add(11);
                 continue;
             }
             System.out.print(el+",");
@@ -48,5 +50,19 @@ public class SimpleIterator {
         System.out.println();
         System.out.println(arrayList);
 
+        // Для демонстрации проблем синхронизации
+        List<Integer> arrayListCOW = new CopyOnWriteArrayList<>(Arrays.asList(9,8,7,6,5,4,3,2,1));
+        it = arrayList.iterator();
+        while(it.hasNext()) {
+            Integer el = it.next();
+            if(el % 2 !=0 ) {
+                it.remove(); //удаляем объект
+                arrayListCOW.add(12); //добавляю объект во время итерации
+                continue;
+            }
+            System.out.print(el+",");
+        }
+        System.out.println();
+        System.out.println(arrayListCOW);
     }
 }
